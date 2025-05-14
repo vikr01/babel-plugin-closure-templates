@@ -1,17 +1,17 @@
 // For unbuild
+import * as path from "path";
 import { defineBuildConfig } from "unbuild";
+import { packagesWithPackageJson as packages } from "./scripts/packages";
 
 export default defineBuildConfig({
-  entries: [
-    {
-      builder: "mkdist",
-      input: "./src/",
-      outDir: "./dist/",
-      ext: "js",
-      format: "cjs",
-      pattern: ["**/*", "!**/*.test.{ts,tsx}", "!**/*/__tests__/**"],
-    },
-  ],
+  entries: packages.map((packagePath) => ({
+    builder: "mkdist",
+    input: path.join(packagePath, "./src/"),
+    outDir: path.join(packagePath, "./dist/"),
+    ext: "js",
+    format: "cjs",
+    pattern: ["**/*", "!**/*.test.{ts,tsx}", "!**/*/__tests__/**"],
+  })),
 
   declaration: true,
 

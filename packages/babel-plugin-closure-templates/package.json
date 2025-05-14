@@ -1,0 +1,36 @@
+{
+  "name": "babel-plugin-closure-templates",
+  "main": "dist/index.js",
+  "author": {
+    "name": "Vik R",
+    "email": "vik120@icloud.com",
+    "url": "http://github.com/vikr01/"
+  },
+  "dependencies": {
+    "@babel/helper-plugin-utils": "^7.27.1",
+    "@types/babel__core": "^7.20.5",
+    "@types/babel__helper-plugin-utils": "^7.10.3",
+    "@types/node": "^22.15.18"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.27.1"
+  },
+  "homepage": "https://github.com/vikr01/babel-plugin-closure-templates/packages/babel-plugin-closure-templates#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vikr01/babel-plugin-closure-templates.git",
+    "directory": "packages/babel-plugin-closure-templates"
+  },
+  "keywords": [
+    "google",
+    "closure-templates",
+    "soy-language",
+    "babel",
+    "babel-plugin",
+    "babel7"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vikr01/babel-plugin-closure-templates/issues"
+  }
+}
