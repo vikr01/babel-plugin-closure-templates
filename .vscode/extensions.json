@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "Blodwynn.soysyntaxchecker",
+  ],
+  "unwantedRecommendations": [
+    "flowtype.flow-for-vscode",
+  ],
+}

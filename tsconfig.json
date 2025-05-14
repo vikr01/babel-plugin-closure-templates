@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/recommended",
+
+  "compilerOptions": {
+    "noEmit": true,
+
+    "module": "ESNext",
+    "moduleResolution": "node",
+  }
+}
