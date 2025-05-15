@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.codehaus.groovy:groovy-json:3.0.17'
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+// ✅ Load dependencies from package.json
+def pkgJson = new groovy.json.JsonSlurper().parse(file('package.json'))
+def javaDeps = pkgJson.javaDependencies ?: []
+
+dependencies {
+    javaDeps.each { dep ->
+        implementation dep
+    }
+}
+
+// ✅ TeaVM WebAssembly compile task
+task compileToWasm(type: JavaExec) {
+    dependsOn build
+    group = 'build'
+    description = 'Compile Java to WebAssembly using TeaVM'
+
+    classpath = sourceSets.main.runtimeClasspath + configurations.runtimeClasspath
+    mainClass.set('org.teavm.cli.TeaVMRunner')
+
+    args = [
+        '-t', 'webassembly/wasm',                          // ✅ Target: WASM
+        '-e', 'compile',                                   // ✅ Function exported
+        '-d', "${projectDir}/dist",                        // ✅ Output directory
+        '-f', "${projectDir}/dist/MyCompiler.wasm",        // ✅ Output file name
+        '--strict',                                        // ✅ Avoid unsupported reflection/annotation crashes
+        'MyCompiler'                                       // ✅ Fully qualified main class (no package assumed)
+    ]
+}
