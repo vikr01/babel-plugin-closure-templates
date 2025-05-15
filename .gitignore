@@ -27,3 +27,6 @@ node_modules/
 yarn.lock
 
 *.tsbuildinfo
+
+# Java
+/vendor/

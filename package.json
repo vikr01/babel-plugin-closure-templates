@@ -11,9 +11,11 @@
   ],
   "scripts": {
     "build": "unbuild",
+    "build-compiler": "node ./scripts/build-compiler.cjs",
     "lint": "npm run lint-specific -- .",
     "lint-fix": "npm run lint -- --fix",
     "lint-specific": "eslint",
+    "postinstall": "node ./scripts/fetch-git-deps.cjs",
     "prepublishOnly": "npm run build",
     "test": "vitest",
     "typecheck": "tsc"
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@babel/core": "^7.27.1",
     "@tsconfig/recommended": "^1.0.8",
+    "@types/degit": "^2.8.6",
     "@types/glob": "^8.1.0",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@vikr01/eslint-config": "^1.0.0-alpha.4",
@@ -28,14 +31,26 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "glob": "^11.0.2",
+    "semver": "^7.7.2",
+    "tiged": "^2.12.7",
     "typescript-eslint": "^8.32.1",
     "unbuild": "^3.5.0",
     "vitest": "^3.1.3"
+  },
+  "gitDeps": {
+    "closure-templates": {
+      "repo": "https://github.com/google/closure-templates",
+      "tag": "release-2024-02-26"
+    }
   },
   "homepage": "https://github.com/vikr01/babel-plugin-closure-templates#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vikr01/babel-plugin-closure-templates.git"
+  },
+  "engines": {
+    "node": ">=20",
+    "java": "17.x"
   },
   "keywords": [
     "google",
