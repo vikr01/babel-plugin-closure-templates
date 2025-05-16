@@ -30,4 +30,6 @@ yarn.lock
 
 # Java
 /vendor/
-/.java-version
+.java-version
+build/
+.gradle/

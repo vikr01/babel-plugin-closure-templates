@@ -1,3 +1,6 @@
 {
-  "name": "closure-templates-compiler"
+  "name": "closure-templates-compiler",
+  "javaDependencies": [
+    "com.google.template:soy:2024-02-26"
+  ]
 }

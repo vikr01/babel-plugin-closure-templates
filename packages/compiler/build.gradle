@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.codehaus.groovy:groovy-json:3.0.17'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://maven.pkg.jetbrains.space/public/p/closure-templates/maven" }
+}
+
+// ✅ Load dependencies from package.json
+def pkgJson = new groovy.json.JsonSlurper().parse(file('package.json'))
+def javaDeps = pkgJson.javaDependencies ?: []
+
+dependencies {
+    javaDeps.each { dep ->
+        implementation dep
+    }
+    // Ensure soy is present in case it's not listed
+    implementation 'com.google.template:soy:2024-03-28'
+}
+
+application {
+    mainClass = 'MyCompiler'
+}
+
+// ✅ Disable default JAR task
+jar.enabled = false
+
+// ✅ Fat JAR to dist/SoyCompiler.jar
+tasks.register('fatJar', Jar) {
+    group = 'build'
+    description = 'Creates a standalone executable JAR for SoyCompiler'
+
+    archiveBaseName.set('SoyCompiler')
+    archiveVersion.set('')
+    archiveClassifier.set('')
+    destinationDirectory.set(file("$rootDir/dist"))
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes 'Main-Class': 'MyCompiler'
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    // Include compiled classes and resources
+    with tasks.named('jar').get()
+}
