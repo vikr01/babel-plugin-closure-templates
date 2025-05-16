@@ -1,23 +1,11 @@
 import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.jssrc.SoyJsSrcOptions;
-
-import java.util.List;
+import java.util.*;
 
 public class MyCompiler {
-    public static void main(String[] args) {
-        String soyCode = "{namespace soy.examples.simple}" +
-            "/**" +
-            " * Says hello to the world." +
-            " */" +
-            "{template helloWorld}" +
-            "  {msg desc=\"Says hello to the world.\"}" +
-            "    Hello world!" +
-            "  {/msg}" +
-            "{/template}";
-
-        // ✅ Avoid passing a filename to skip any file/resource I/O internally
+    public static String compileSoyToJs(String soyCode, String filename) {
         SoyFileSet soyFileSet = SoyFileSet.builder()
-            .add(soyCode, /* filename */ "inline.soy")
+            .add(soyCode, /* filename */ filename)
             .build();
 
         // ✅ Safe options setup for WASM/native-image
@@ -25,8 +13,6 @@ public class MyCompiler {
 
         List<String> jsOutput = soyFileSet.compileToJsSrc(jsOptions, null);
 
-        for (String js : jsOutput) {
-            System.out.println(js);
-        }
+        return String.join(System.lineSeparator(), jsOutput);
     }
 }

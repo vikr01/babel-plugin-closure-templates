@@ -31,6 +31,9 @@ yarn.lock
 # Java
 .java-version
 .gradle/
-/packages/compiler/compiler/
-/packages/compiler/bin/
-/packages/compiler/build/
+/bin/
+/build/
+
+# For building
+*.gradle
+src/
