@@ -1,6 +1,9 @@
 {
   "name": "closure-templates-compiler",
   "javaDependencies": [
-    "com.google.template:soy:2024-02-26"
+    "com.google.template:soy:2024-02-26",
+    "de.mirkosertic.bytecoder:bytecoder-cli:2024-05-10",
+    "org.ow2.asm:asm:9.6",
+    "org.ow2.asm:asm-tree:9.6"
   ]
 }

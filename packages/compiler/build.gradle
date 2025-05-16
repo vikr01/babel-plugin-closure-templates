@@ -4,6 +4,9 @@ buildscript {
     }
     dependencies {
         classpath 'org.codehaus.groovy:groovy-json:3.0.17'
+        classpath 'org.ow2.asm:asm:9.6'
+        classpath 'org.ow2.asm:asm-tree:9.6'
+        classpath 'org.codehaus.groovy:groovy-json:3.0.17'
     }
 }
 
@@ -21,6 +24,7 @@ java {
 repositories {
     mavenCentral()
     maven { url "https://maven.pkg.jetbrains.space/public/p/closure-templates/maven" }
+    maven { url 'https://jitpack.io' }
 }
 
 // ✅ Load dependencies from package.json
@@ -31,8 +35,6 @@ dependencies {
     javaDeps.each { dep ->
         implementation dep
     }
-    // Ensure soy is present in case it's not listed
-    implementation 'com.google.template:soy:2024-03-28'
 }
 
 application {
@@ -40,7 +42,7 @@ application {
 }
 
 // ✅ Disable default JAR task
-jar.enabled = false
+// jar.enabled = false
 
 // ✅ Fat JAR to dist/SoyCompiler.jar
 tasks.register('fatJar', Jar) {
@@ -61,6 +63,73 @@ tasks.register('fatJar', Jar) {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-    // Include compiled classes and resources
     with tasks.named('jar').get()
+}
+
+tasks.register('patchFatJarForBytecoder') {
+    dependsOn 'fatJar'
+    doLast {
+        def jarFile = file("$rootDir/dist/SoyCompiler.jar")
+        def tempDir = file("$buildDir/unpackedJar")
+        def patchedJar = file("$buildDir/patched/SoyCompilerPatched.jar")
+
+        copy {
+            from zipTree(jarFile)
+            into tempDir
+        }
+
+        tempDir.eachFileRecurse(groovy.io.FileType.FILES) { file ->
+            if (file.name.endsWith('.class')) {
+                def inputStream = new FileInputStream(file)
+                def cr = new org.objectweb.asm.ClassReader(inputStream)
+                def cn = new org.objectweb.asm.tree.ClassNode()
+                cr.accept(cn, 0)
+                inputStream.close()
+
+                cn.methods.each { method ->
+                    method.instructions?.iterator()?.each { insn ->
+                        if (insn instanceof org.objectweb.asm.tree.MethodInsnNode
+                                && insn.owner == 'java/lang/String'
+                                && insn.name == 'indexOf'
+                                && insn.desc == '(II)I') {
+
+                            println "Patching method in ${cn.name} : ${method.name}${method.desc}"
+
+                            def replaceInsn = new org.objectweb.asm.tree.InsnList()
+                            replaceInsn.add(new org.objectweb.asm.tree.InsnNode(org.objectweb.asm.Opcodes.ICONST_M1))
+                            method.instructions.insert(insn, replaceInsn)
+                            method.instructions.remove(insn)
+                        }
+                    }
+                }
+
+                def cw = new org.objectweb.asm.ClassWriter(0)
+                cn.accept(cw)
+                file.bytes = cw.toByteArray()
+            }
+        }
+
+        ant.zip(destfile: patchedJar) {
+            fileset(dir: tempDir)
+        }
+
+        println "✔ Patched JAR saved to: $patchedJar"
+    }
+}
+
+tasks.register('compileToWasm', JavaExec) {
+    dependsOn 'patchFatJarForBytecoder'
+    group = "bytecoder"
+    description = "Compile the fatJar to WebAssembly using Bytecoder"
+
+    mainClass = 'de.mirkosertic.bytecoder.cli.BytecoderCLI'
+    classpath = configurations.runtimeClasspath
+
+    args = [
+        'compile',
+        'wasm',
+        '-classpath', "$buildDir/patched/SoyCompilerPatched.jar",
+        '-mainclass', 'MyCompiler',
+        '-builddirectory', "$buildDir/bytecoder"
+    ]
 }
