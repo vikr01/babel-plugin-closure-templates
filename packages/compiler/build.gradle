@@ -1,19 +1,16 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.codehaus.groovy:groovy-json:3.0.17'
-    }
-}
-
 plugins {
     id 'java'
 }
 
+import groovy.json.JsonSlurper
+
+def pkgJson = new JsonSlurper().parse(file('package.json'))
+def javaVersion = pkgJson.engines?.java?.replaceAll(/[^\\d]/, "") ?: "17"
+def javaDeps = pkgJson.javaDependencies ?: []
+
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(javaVersion.toInteger())
     }
 }
 
@@ -21,31 +18,35 @@ repositories {
     mavenCentral()
 }
 
-// ✅ Load dependencies from package.json
-def pkgJson = new groovy.json.JsonSlurper().parse(file('package.json'))
-def javaDeps = pkgJson.javaDependencies ?: []
-
 dependencies {
-    javaDeps.each { dep ->
-        implementation dep
+    javaDeps.each {
+        implementation it
     }
 }
 
-// ✅ TeaVM WebAssembly compile task
-task compileToWasm(type: JavaExec) {
+task compileToWasm(type: Exec) {
     dependsOn build
     group = 'build'
-    description = 'Compile Java to WebAssembly using TeaVM'
+    description = 'Compile Java to WebAssembly using GraalVM native-image'
 
-    classpath = sourceSets.main.runtimeClasspath + configurations.runtimeClasspath
-    mainClass.set('org.teavm.cli.TeaVMRunner')
+    def outputDir = "${projectDir}/dist"
+    def mainClass = 'MyCompiler'
+    def nativeImage = "${System.getenv('JAVA_HOME')}/bin/native-image"
 
-    args = [
-        '-t', 'webassembly/wasm',                          // ✅ Target: WASM
-        '-e', 'compile',                                   // ✅ Function exported
-        '-d', "${projectDir}/dist",                        // ✅ Output directory
-        '-f', "${projectDir}/dist/MyCompiler.wasm",        // ✅ Output file name
-        '--strict',                                        // ✅ Avoid unsupported reflection/annotation crashes
-        'MyCompiler'                                       // ✅ Fully qualified main class (no package assumed)
-    ]
+    commandLine nativeImage,
+        "--no-fallback",
+        "--initialize-at-build-time",
+        "--target=wasm32-wasi",
+        "-H:Name=${mainClass}",
+        "-H:Class=${mainClass}",
+        "-cp", "build/classes/java/main",
+        "src/main/java/${mainClass}.java"
+
+    doLast {
+        mkdir outputDir
+        copy {
+            from "${projectDir}/${mainClass}.wasm"
+            into outputDir
+        }
+    }
 }

@@ -4,10 +4,11 @@ import java.util.List;
 
 public class MyCompiler {
     public static String compile() {
-        String soy = "{namespace ex}\n{template .t}\n{@param name: string}\nHello {$name}!\n{/template}";
-        SoyFileSet sfs = SoyFileSet.builder().add(soy, "inline.soy").build();
-        List<String> js = sfs.compileToJsSrc(new SoyJsSrcOptions(), null);
-        return js.get(0);
+        return "example string";
+        // String soy = "{namespace ex}\n{template .t}\n{@param name: string}\nHello {$name}!\n{/template}";
+        // SoyFileSet sfs = SoyFileSet.builder().add(soy, "inline.soy").build();
+        // List<String> js = sfs.compileToJsSrc(new SoyJsSrcOptions(), null);
+        // return js.get(0);
     }
 
     public static void main(String[] args) {

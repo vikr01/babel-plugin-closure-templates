@@ -1,8 +1,9 @@
 {
   "name": "closure-templates-compiler",
+  "engines": {
+    "java": "17.x"
+  },
   "javaDependencies": [
-    "com.google.template:soy:2024-02-26",
-    "com.google.guava:guava:32.1.2-jre",
-    "org.teavm:teavm-cli:0.12.0"
+    "com.google.template:soy:2024-02-26"
   ]
 }
