@@ -78,21 +78,22 @@ tasks.register('patchFatJarForBytecoder') {
             into tempDir
         }
 
-        tempDir.eachFileRecurse(groovy.io.FileType.FILES) { file ->
-            if (file.name.endsWith('.class')) {
-                def inputStream = new FileInputStream(file)
-                def cr = new org.objectweb.asm.ClassReader(inputStream)
-                def cn = new org.objectweb.asm.tree.ClassNode()
-                cr.accept(cn, 0)
-                inputStream.close()
+        def patchClassFile = { File classFile ->
+            def inputStream = new FileInputStream(classFile)
+            def cr = new org.objectweb.asm.ClassReader(inputStream)
+            def cn = new org.objectweb.asm.tree.ClassNode()
+            cr.accept(cn, 0)
+            inputStream.close()
 
-                cn.methods.each { method ->
-                    method.instructions?.iterator()?.each { insn ->
-                        if (insn instanceof org.objectweb.asm.tree.MethodInsnNode
-                                && insn.owner == 'java/lang/String'
-                                && insn.name == 'indexOf'
-                                && insn.desc == '(II)I') {
+            cn.methods.each { method ->
+                method.instructions?.iterator()?.each { insn ->
+                    if (insn instanceof org.objectweb.asm.tree.MethodInsnNode
+                            && insn.owner == 'java/lang/String'
+                            && insn.name == 'indexOf') {
 
+                        println "Found indexOf call: ${insn.desc} in ${cn.name}.${method.name}"
+
+                        if (insn.desc == '(II)I') {
                             println "Patching method in ${cn.name} : ${method.name}${method.desc}"
 
                             def replaceInsn = new org.objectweb.asm.tree.InsnList()
@@ -102,19 +103,43 @@ tasks.register('patchFatJarForBytecoder') {
                         }
                     }
                 }
+            }
 
-                def cw = new org.objectweb.asm.ClassWriter(0)
-                cn.accept(cw)
-                file.bytes = cw.toByteArray()
+            def cw = new org.objectweb.asm.ClassWriter(0)
+            cn.accept(cw)
+            classFile.bytes = cw.toByteArray()
+        }
+
+        def processDirectory = { File dir ->
+            dir.eachFileRecurse(groovy.io.FileType.FILES) { file ->
+                if (file.name.endsWith('.class')) {
+                    patchClassFile(file)
+                } else if (file.name.endsWith('.jar')) {
+                    def nestedJarDir = new File(file.parentFile, file.name.replace('.jar', ''))
+                    copy {
+                        from zipTree(file)
+                        into nestedJarDir
+                    }
+                    nestedJarDir.eachFileRecurse(groovy.io.FileType.FILES) { nestedFile ->
+                        if (nestedFile.name.endsWith('.class')) {
+                            patchClassFile(nestedFile)
+                        }
+                    }
+                    ant.zip(destfile: file) {
+                        fileset(dir: nestedJarDir)
+                    }
+                }
             }
         }
+
+        processDirectory(tempDir)
 
         ant.zip(destfile: patchedJar) {
             fileset(dir: tempDir)
         }
 
         println "✔ Patched JAR saved to: $patchedJar"
-    }
+    }  
 }
 
 tasks.register('compileToWasm', JavaExec) {
