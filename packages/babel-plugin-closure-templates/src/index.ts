@@ -56,13 +56,17 @@ function parserOverrideWithPluginOptions(
   const dangerouslyAlwaysTryBuilding =
     pluginOptions?.dangerouslyAlwaysTryBuilding ?? false;
 
-  const compile = () => compileSoyToJsSync(code, opts?.sourceFilename);
+  const filename =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    opts?.sourceFilename ?? (opts as any)?.sourceFileName ?? null;
+
+  const compile = () => compileSoyToJsSync(code, filename);
 
   if (dangerouslyAlwaysTryBuilding) {
     try {
       code = compile();
     } catch {}
-  } else if (isValidSoyFile(code, opts?.sourceFilename, pluginOptions)) {
+  } else if (isValidSoyFile(code, filename, pluginOptions)) {
     code = compile();
   }
 
