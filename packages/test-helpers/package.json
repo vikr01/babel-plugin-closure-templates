@@ -1,0 +1,7 @@
+{
+  "name": "private-test-helpers",
+  "private": true,
+  "peerDependencies": {
+    "@babel/core": "^7.27.1"
+  }
+}

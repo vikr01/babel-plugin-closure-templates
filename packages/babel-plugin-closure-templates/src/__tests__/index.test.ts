@@ -1,10 +1,9 @@
-import { describe, it, expect } from "vitest";
 import {
   basicSoyString,
-  getFixtures,
-  transform,
   wasGeneratedBySoyCompiler,
-} from "./helpers";
+} from "private-test-helpers";
+import { describe, it, expect } from "vitest";
+import { getFixtures, transformWithPlugin as transform } from "./helpers";
 
 describe("plugin", () => {
   it.concurrent.for(getFixtures())(

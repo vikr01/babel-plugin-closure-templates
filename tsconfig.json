@@ -8,5 +8,9 @@
     "moduleResolution": "node",
 
     "resolveJsonModule": true,
+
+    "paths": {
+      "private-test-helpers": ["./packages/test-helpers/src/"],
+    }
   }
 }

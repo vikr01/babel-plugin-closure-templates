@@ -1,5 +1,6 @@
 {
   "name": "babel-plugin-closure-templates",
+  "version": "0.0.0",
   "main": "dist/index.js",
   "author": {
     "name": "Vik R",
@@ -13,7 +14,8 @@
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.5",
-    "java": ">=0.15.0"
+    "java": ">=0.15.0",
+    "private-test-helpers": "*"
   },
   "peerDependencies": {
     "@babel/core": "^7.27.1",

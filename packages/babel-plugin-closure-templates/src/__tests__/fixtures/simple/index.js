@@ -31,6 +31,15 @@ soy.examples.simple.helloWorld = function (opt_data, opt_ijData) {
   }
   return soy.VERY_UNSAFE.ordainSanitizedHtml('Hello world!');
 };
+if (false) {
+  /**
+   * @param {!Object} $$areYouAnInternalCaller
+   * @param {!goog.soy.IjData} $ijData
+   * @return {!goog.soy.data.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  soy.examples.simple.helloWorld_soyInternalStubs;
+}
 if (goog.DEBUG) {
   /**
    * @nocollapse
@@ -70,6 +79,16 @@ soy.examples.simple.helloName$ = function ($$areYouAnInternalCaller, $ijData, p$
   const name = soy.assertParamType(p$name == null || typeof p$name === 'string', 'name', p$name, '@param', 'null|string|undefined');
   return soy.VERY_UNSAFE.ordainSanitizedHtml(name ? 'Hello ' + soy.$$escapeHtml(name) + '!' : soy.examples.simple.helloWorld(null, $ijData));
 };
+if (false) {
+  /**
+   * @param {!Object} $$areYouAnInternalCaller
+   * @param {!goog.soy.IjData} $ijData
+   * @param {null|string|undefined=} p$name
+   * @return {!goog.soy.data.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  soy.examples.simple.helloName_soyInternalStubs;
+}
 /**
  * @typedef {{
  *  name: (null|string|undefined),
@@ -125,6 +144,16 @@ soy.examples.simple.helloNames$ = function ($$areYouAnInternalCaller, $ijData, p
   }
   return soy.VERY_UNSAFE.ordainSanitizedHtml($output);
 };
+if (false) {
+  /**
+   * @param {!Object} $$areYouAnInternalCaller
+   * @param {!goog.soy.IjData} $ijData
+   * @param {(!Array<string>|!ReadonlyArray<string>)} p$names
+   * @return {!goog.soy.data.SanitizedHtml}
+   * @suppress {checkTypes}
+   */
+  soy.examples.simple.helloNames_soyInternalStubs;
+}
 /**
  * @typedef {{
  *  names: (!Array<string>|!ReadonlyArray<string>),
