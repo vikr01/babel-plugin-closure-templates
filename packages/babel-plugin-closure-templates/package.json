@@ -8,19 +8,18 @@
   },
   "dependencies": {
     "@babel/helper-plugin-utils": "^7.27.1",
-    "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
-    "@types/babel__parser": "^7.0.0",
     "closure-templates-compiler": "^0.0.0"
   },
   "devDependencies": {
+    "@types/babel__core": "^7.20.5",
     "java": ">=0.15.0"
   },
   "peerDependencies": {
     "@babel/core": "^7.27.1",
     "java": ">=0.15.0"
   },
-  "homepage": "https://github.com/vikr01/babel-plugin-closure-templates/packages/babel-plugin-closure-templates#readme",
+  "homepage": "https://github.com/vikr01/babel-plugin-closure-templates/tree/HEAD/packages/babel-plugin-closure-templates#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vikr01/babel-plugin-closure-templates.git",

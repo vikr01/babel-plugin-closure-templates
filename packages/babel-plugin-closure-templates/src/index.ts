@@ -1,6 +1,10 @@
-import type { PluginObj, PluginPass } from "@babel/core";
+import type {
+  ParserOptions,
+  ParseResult,
+  PluginObj,
+  PluginPass,
+} from "@babel/core";
 import type { BabelAPI } from "@babel/helper-plugin-utils";
-import type { parse as babelParse } from "@babel/parser";
 
 import { declare } from "@babel/helper-plugin-utils";
 import { compileSoyToJsSync } from "closure-templates-compiler";
@@ -39,9 +43,9 @@ type NullablePluginOptions = null | undefined | PluginOptions;
 
 type BabelParseOverride = (
   code: string,
-  opts: undefined | Parameters<typeof babelParse>[1],
+  opts: undefined | ParserOptions,
   parse: BabelParseOverride,
-) => ReturnType<typeof babelParse>;
+) => ParseResult;
 
 function parserOverrideWithPluginOptions(
   pluginOptions: NullablePluginOptions,
