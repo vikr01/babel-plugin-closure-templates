@@ -14,12 +14,12 @@
   },
   "devDependencies": {
     "@types/babel__core": "^7.20.5",
-    "java": ">=0.15.0",
+    "java-bridge": "^2.8.0",
     "private-test-helpers": "*"
   },
   "peerDependencies": {
     "@babel/core": "^7.27.1",
-    "java": ">=0.15.0"
+    "java-bridge": "^2.8.0"
   },
   "homepage": "https://github.com/vikr01/babel-plugin-closure-templates/tree/HEAD/packages/babel-plugin-closure-templates#readme",
   "repository": {

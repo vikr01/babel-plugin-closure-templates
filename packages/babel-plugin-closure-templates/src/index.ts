@@ -58,7 +58,7 @@ function parserOverrideWithPluginOptions(
 
   const filename =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    opts?.sourceFilename ?? (opts as any)?.sourceFileName ?? null;
+    opts?.sourceFilename ?? (opts as any)?.sourceFileName ?? undefined;
 
   const compile = () => compileSoyToJsSync(code, filename);
 

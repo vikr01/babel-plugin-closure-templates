@@ -2,7 +2,6 @@
   "name": "closure-templates-compiler",
   "version": "0.0.0",
   "main": "dist/typescript/compile.js",
-
   "author": {
     "name": "Vik R",
     "email": "vik120@icloud.com",
@@ -15,10 +14,10 @@
     "@types/java": "^0.9.6"
   },
   "devDependencies": {
-    "java": ">=0.15.0"
+    "java-bridge": "^2.8.0"
   },
   "peerDependencies": {
-    "java": ">=0.15.0"
+    "java-bridge": "^2.8.0"
   },
   "homepage": "https://github.com/vikr01/babel-plugin-closure-templates/tree/HEAD/compiler#readme",
   "repository": {

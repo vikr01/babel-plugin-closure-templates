@@ -30,6 +30,7 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.4.0",
     "glob": "^11.0.2",
+    "java-bridge": "^2.8.0",
     "semver": "^7.7.2",
     "tiged": "^2.12.7",
     "typescript-eslint": "^8.32.1",
