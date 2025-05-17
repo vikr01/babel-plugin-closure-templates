@@ -10,10 +10,15 @@
     "@babel/helper-plugin-utils": "^7.27.1",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
-    "@types/node": "^22.15.18"
+    "@types/node": "^22.15.18",
+    "closure-templates-compiler": "^0.0.0"
+  },
+  "devDependencies": {
+    "java": ">=0.15.0"
   },
   "peerDependencies": {
-    "@babel/core": "^7.27.1"
+    "@babel/core": "^7.27.1",
+    "java": ">=0.15.0"
   },
   "homepage": "https://github.com/vikr01/babel-plugin-closure-templates/packages/babel-plugin-closure-templates#readme",
   "repository": {

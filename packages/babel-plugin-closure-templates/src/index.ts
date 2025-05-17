@@ -1,5 +1,7 @@
 import type { PluginObj, PluginPass } from "@babel/core";
 import type { BabelAPI } from "@babel/helper-plugin-utils";
+import { compileSoyToJsSync } from "closure-templates-compiler";
+import { extname } from "path";
 
 import { declare } from "@babel/helper-plugin-utils";
 
@@ -16,7 +18,18 @@ export default declare<PluginOptions, PluginObj<PluginState>>(
     api.assertVersion(7);
 
     return {
-      visitor: {},
+      visitor: {
+        Program: {
+          enter(path, state) {
+            const filename = state?.file?.opts?.filename;
+            const code = state?.file?.code;
+
+            if (filename == null || extname(filename) !== ".soy") {
+              return;
+            }
+          },
+        },
+      },
     };
   },
 );
