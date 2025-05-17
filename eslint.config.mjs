@@ -6,5 +6,5 @@ export default defineConfig(
     json: false,
     typescript: true,
   }),
-  globalIgnores(["./dist/"]),
+  globalIgnores(["packages/*/dist/"]),
 );
