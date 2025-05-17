@@ -1,47 +1,110 @@
-import * as babel from "@babel/core";
-import * as fs from "fs";
-import * as path from "path";
 import { describe, it, expect } from "vitest";
-import plugin from "..";
-const fixtures = getFixtures();
+import {
+  basicSoyString,
+  getFixtures,
+  transform,
+  wasGeneratedBySoyCompiler,
+} from "./helpers";
 
 describe("plugin", () => {
-  it.concurrent.for(fixtures)(
-    '"%s" fixture compiles',
-    async ([, fixtureDirectoryPath]) => {
-      const fileContents = fs
-        .readFileSync(path.join(fixtureDirectoryPath, "./index.soy"))
-        .toString();
+  it.concurrent.for(getFixtures())(
+    'fixture: "%s" compiles',
+    async ([, { fileContents, generatedFileName, niceFileName }]) => {
+      const transformed = transform(fileContents, niceFileName);
 
-      const transformed = await transform(fileContents);
-
-      expect(transformed).toMatchFileSnapshot(
-        path.join(fixtureDirectoryPath, "./index.js"),
-      );
+      await expect(transformed).toMatchFileSnapshot(generatedFileName);
     },
   );
-});
 
-type FixtureName = string;
-type FixtureDirectoryPath = string;
+  it("can be forced to run on all files using dangerouslyAlwaysTryBuilding: true", async () => {
+    const soy = transform(basicSoyString, null, {
+      dangerouslyAlwaysTryBuilding: true,
+    });
 
-function getFixtures(): [FixtureName, FixtureDirectoryPath][] {
-  const fixturesFolder = path.join(__dirname, "fixtures");
+    expect(soy).toMatchSnapshot();
 
-  return fs
-    .readdirSync(fixturesFolder, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => [entry.name, path.join(fixturesFolder, entry.name)]);
-}
+    const soy2 = transform(basicSoyString, "not-a-soy-file.notsoy", {
+      dangerouslyAlwaysTryBuilding: true,
+    });
 
-async function transform(code: string): Promise<string> {
-  const res = await babel.transformAsync(code, {
-    plugins: [plugin],
-    configFile: false,
-    babelrc: false,
+    expect(soy2).toMatchSnapshot();
   });
 
-  console.log('res', res);
+  it("throws if you pass a soy string without a .soy file and without dangerouslyAlwaysTryBuilding: true", () => {
+    expect(() => {
+      transform(basicSoyString, null);
+    }).toThrow();
 
-  return res?.code as string;
-}
+    expect(() => {
+      transform(basicSoyString, null, { dangerouslyAlwaysTryBuilding: false });
+    }).toThrow();
+  });
+
+  it("throws if you pass a soy string without a .soy file and without dangerouslyAlwaysTryBuilding: true", () => {
+    expect(() => {
+      transform(basicSoyString, null);
+    }).toThrow();
+
+    expect(() => {
+      transform(basicSoyString, null, { dangerouslyAlwaysTryBuilding: false });
+    }).toThrow();
+  });
+
+  it("can still compile js if you have dangerouslyAlwaysTryBuilding: true", () => {
+    const expectedResult = "this is the expected result";
+    const code = transform(
+      /* js */ `
+        function foo() { 
+          return ${JSON.stringify(expectedResult)}; 
+        }
+        
+        foo();
+        `,
+      null,
+    );
+
+    expect(eval(code)).toBe(expectedResult);
+  });
+
+  it("can run on different extensions if you change the extensions array", async () => {
+    const soyExtensions = [".foobarbaz", ".soyplus"];
+
+    expect(() => {
+      transform(basicSoyString, "validsoyfilename.soy", { soyExtensions });
+    }).toThrow();
+
+    expect(
+      wasGeneratedBySoyCompiler(
+        transform(basicSoyString, "otherfileType.foobarbaz", {
+          soyExtensions,
+        }),
+      ),
+    ).toBe(true);
+
+    expect(
+      wasGeneratedBySoyCompiler(
+        transform(basicSoyString, "extendedType.soyplus", {
+          soyExtensions,
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it("can skip on different extensions if you change the omit array", async () => {
+    const omitExtensions = [".ignoreme.soy"];
+
+    expect(() => {
+      transform(basicSoyString, "validsoyfilename.ignoreme.soy", {
+        omitExtensions,
+      });
+    }).toThrow();
+
+    expect(
+      wasGeneratedBySoyCompiler(
+        transform(basicSoyString, "validsoyfilename.notignored.soy", {
+          omitExtensions,
+        }),
+      ),
+    ).toBe(true);
+  });
+});

@@ -8,7 +8,7 @@ java.classpath.push(jarPath);
  */
 export function compileSoyToJsSync(
   soyCode: string,
-  filename: string = "fake_filename_for_compiler.soy",
+  filename: string = "[no file specified]",
 ): string {
   return java.callStaticMethodSync(
     "MyCompiler",

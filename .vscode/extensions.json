@@ -2,6 +2,7 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "Blodwynn.soysyntaxchecker",
+    "Tobermory.es6-string-html",
   ],
   "unwantedRecommendations": [
     "flowtype.flow-for-vscode",
