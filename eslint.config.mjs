@@ -6,5 +6,9 @@ export default defineConfig(
     json: false,
     typescript: true,
   }),
-  globalIgnores(["packages/*/dist/", "**/__tests__/fixtures/"]),
+  globalIgnores([
+    "packages/*/dist/",
+    "**/__tests__/fixtures/",
+    "packages/babel-cli-test/outputs",
+  ]),
 );

@@ -19,6 +19,7 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@babel/cli": "^7.27.2",
     "@babel/core": "^7.27.1",
     "@tsconfig/recommended": "^1.0.8",
     "@types/degit": "^2.8.6",
