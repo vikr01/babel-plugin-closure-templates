@@ -1,8 +1,8 @@
-import { PluginItem } from "@babel/core";
-import { type BabelAPI, declarePreset } from "@babel/helper-plugin-utils";
-import babelPluginClosureTemplates, {
-  type PluginOptions,
-} from "babel-plugin-closure-templates";
+import type { PluginItem } from "@babel/core";
+import type { PluginOptions } from "babel-plugin-closure-templates";
+
+import { declarePreset } from "@babel/helper-plugin-utils";
+import babelPluginClosureTemplates from "babel-plugin-closure-templates";
 
 type PresetObj = { plugins: PluginItem[] };
 

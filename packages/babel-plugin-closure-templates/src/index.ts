@@ -1,9 +1,4 @@
-import type {
-  ParserOptions,
-  ParseResult,
-  PluginObj,
-  PluginPass,
-} from "@babel/core";
+import type { parse, ParserOptions, PluginObj, PluginPass } from "@babel/core";
 import type { BabelAPI } from "@babel/helper-plugin-utils";
 
 import { declare } from "@babel/helper-plugin-utils";
@@ -44,15 +39,15 @@ type NullablePluginOptions = null | undefined | PluginOptions;
 type BabelParseOverride = (
   code: string,
   opts: undefined | ParserOptions,
-  parse: BabelParseOverride,
-) => ParseResult;
+  _parse: typeof parse,
+) => ReturnType<typeof parse>;
 
 function parserOverrideWithPluginOptions(
   pluginOptions: NullablePluginOptions,
-  code: Parameters<BabelParseOverride>[0],
-  opts: Parameters<BabelParseOverride>[1],
-  parse: Parameters<BabelParseOverride>[2],
+  ...rest: Parameters<BabelParseOverride>
 ): ReturnType<BabelParseOverride> {
+  let [code] = rest;
+  const [, opts, parse] = rest;
   const dangerouslyAlwaysTryBuilding =
     pluginOptions?.dangerouslyAlwaysTryBuilding ?? false;
 
@@ -60,18 +55,22 @@ function parserOverrideWithPluginOptions(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     opts?.sourceFilename ?? (opts as any)?.sourceFileName ?? undefined;
 
-  const compile = () => compileSoyToJsSync(code, filename);
+  const compile = () => {
+    code = compileSoyToJsSync(code, filename);
+  };
 
-  if (dangerouslyAlwaysTryBuilding) {
-    try {
-      code = compile();
-    } catch {}
-  } else if (isValidSoyFile(code, filename, pluginOptions)) {
-    code = compile();
+  if (!shouldSkip(filename, pluginOptions)) {
+    if (isValidSoyFile(code, filename, pluginOptions)) {
+      compile();
+    } else if (dangerouslyAlwaysTryBuilding) {
+      try {
+        compile();
+      } catch {}
+    }
   }
 
   // Use Babel's current parser to parse the transformed code
-  return parse(code, opts, parse);
+  return parse(code, opts);
 }
 
 const DEFAULT_SOY_EXTENSIONS = [".soy"];
@@ -85,18 +84,29 @@ function isValidSoyFile(
     return false;
   }
 
+  const soyExtensions = pluginOptions?.soyExtensions ?? DEFAULT_SOY_EXTENSIONS;
+
+  return soyExtensions.includes(extname(filename));
+}
+
+function shouldSkip(
+  filename: unknown,
+  pluginOptions: NullablePluginOptions,
+): boolean {
+  if (filename == null || typeof filename !== "string") {
+    return false;
+  }
+
   const omitExtensions = pluginOptions?.omitExtensions;
 
   if (
     omitExtensions != null &&
     omitExtensions.some((ext) => basename(filename).endsWith(ext))
   ) {
-    return false;
+    return true;
   }
 
-  const soyExtensions = pluginOptions?.soyExtensions ?? DEFAULT_SOY_EXTENSIONS;
-
-  return soyExtensions.includes(extname(filename));
+  return false;
 }
 
 /*
