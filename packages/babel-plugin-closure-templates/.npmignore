@@ -28,10 +28,3 @@ yarn.lock
 
 # Typescript build
 *.tsbuildinfo
-
-# Java
-.java-version
-.gradle/
-/bin/
-/build/
-*.gradle
