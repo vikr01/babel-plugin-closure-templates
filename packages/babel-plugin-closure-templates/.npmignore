@@ -1,6 +1,11 @@
 # Source files
 src/
 
+# Test files
+__tests__/
+*.test.*
+*.spec.*
+
 # Generated files
 .DS_Store
 
