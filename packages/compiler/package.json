@@ -1,7 +1,7 @@
 {
   "name": "closure-templates-compiler",
   "version": "0.0.0",
-  "main": "dist/typescript/compile.js",
+  "main": "dist/compile.js",
   "author": {
     "name": "Vik R",
     "email": "vik120@icloud.com",

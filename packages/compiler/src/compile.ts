@@ -1,8 +1,8 @@
 import { appendClasspath, importClass } from "java-bridge";
-const jarPath = require.resolve("../../compiler/SoyCompiler.jar");
+const jarPath = require.resolve("../compiler/dist/SoyCompiler.jar");
 
 appendClasspath(jarPath);
-const MyCompiler = importClass("MyCompiler");
+const MyCompiler = importClass("SoyCompiler");
 
 type SoyCodeString = string;
 type NullableFilename = string | null | undefined;

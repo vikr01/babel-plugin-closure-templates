@@ -32,17 +32,24 @@ dependencies {
     }
 }
 
-// ✅ Fat JAR to compiler/SoyCompiler.jar
-// No main class needed since we're calling statically
+// ✅ Use custom source directory
+sourceSets {
+    main {
+        java {
+            srcDirs = ['compiler/src']
+        }
+    }
+}
 
+// ✅ Fat JAR to compiler/dist/SoyCompiler.jar
 tasks.register('fatJar', Jar) {
     group = 'build'
-    description = 'Creates a standalone JAR for MyCompiler with all dependencies'
+    description = 'Creates a standalone JAR for SoyCompiler with all dependencies'
 
     archiveBaseName.set('SoyCompiler')
     archiveVersion.set('')
     archiveClassifier.set('')
-    destinationDirectory.set(file("$rootDir/compiler"))
+    destinationDirectory.set(file("$rootDir/compiler/dist"))
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

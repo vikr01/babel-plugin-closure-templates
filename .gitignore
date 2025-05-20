@@ -31,6 +31,6 @@ yarn.lock
 # Java
 .java-version
 .gradle/
-/packages/compiler/compiler/
+/packages/compiler/compiler/dist/
 /packages/compiler/bin/
 /packages/compiler/build/
