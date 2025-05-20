@@ -3,5 +3,6 @@
   "private": true,
   "peerDependencies": {
     "@babel/core": "^7.27.1"
-  }
+  },
+  "version": "1.0.0"
 }
