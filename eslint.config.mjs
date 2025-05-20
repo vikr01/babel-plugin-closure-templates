@@ -9,6 +9,8 @@ export default defineConfig(
   globalIgnores([
     "packages/*/dist/",
     "**/__tests__/fixtures/",
-    "packages/babel-cli-test/outputs",
+    "packages/compiler/build/",
+    "packages/compiler/compiler/",
+    "packages/compiler/bin/",
   ]),
 );

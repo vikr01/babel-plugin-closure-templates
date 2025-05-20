@@ -1,17 +1,32 @@
 import { appendClasspath, importClass } from "java-bridge";
-// import java from "java";
 const jarPath = require.resolve("../../compiler/SoyCompiler.jar");
 
 appendClasspath(jarPath);
 const MyCompiler = importClass("MyCompiler");
 
+type SoyCodeString = string;
+type NullableFilename = string | null | undefined;
+
+const DEFAULT_FILENAME = "[no file specified]";
+
 /**
- * Compiles Soy template code to JS using Java (synchronously).
+ * Compiles Soy template code to JS using Java synchronously.
  */
 export function compileSoyToJsSync(
-  soyCode: string,
-  filename?: string | null | undefined,
+  soyCode: SoyCodeString,
+  filename?: NullableFilename,
 ): string {
-  filename = filename ?? "[no file specified]";
+  filename = filename ?? DEFAULT_FILENAME;
   return MyCompiler.compileSoyToJsSync(soyCode, filename);
+}
+
+/**
+ * Compiles Soy template code to JS using Java asynchronously.
+ */
+export async function compileSoyToJs(
+  soyCode: SoyCodeString,
+  filename?: NullableFilename,
+): Promise<string> {
+  filename = filename ?? DEFAULT_FILENAME;
+  return MyCompiler.compileSoyToJs(soyCode, filename);
 }
