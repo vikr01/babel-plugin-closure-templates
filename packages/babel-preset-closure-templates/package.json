@@ -1,6 +1,6 @@
 {
   "name": "babel-preset-closure-templates",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "author": {
     "name": "Vik R",
@@ -10,7 +10,7 @@
   "dependencies": {
     "@babel/helper-plugin-utils": "^7.27.1",
     "@types/babel__helper-plugin-utils": "^7.10.3",
-    "babel-plugin-closure-templates": "^1.0.0"
+    "babel-plugin-closure-templates": "^1.0.1"
   },
   "devDependencies": {
     "java-bridge": "^2.8.0"
