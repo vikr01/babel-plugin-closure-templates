@@ -34,3 +34,5 @@ yarn.lock
 /packages/compiler/compiler/dist/
 /packages/compiler/bin/
 /packages/compiler/build/
+
+.nx
